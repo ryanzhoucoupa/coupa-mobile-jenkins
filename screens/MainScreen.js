@@ -4,7 +4,8 @@ import {
   Alert,
   Text,
   ScrollView,
-  View
+  View,
+  ListView
 } from 'react-native';
 import {
   Button
@@ -22,6 +23,22 @@ class MainScreen extends Component {
 
   async componentWillMount() {
     this.props.asyncLoadJenkinsFromStorage();
+
+    this.createDataSource(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // nextProps are the next set of props that this component will be rendered with
+    // this.props is still the old set of props
+    this.createDataSource(nextProps);
+  }
+
+  createDataSource({ jenkins }) {
+    const ds = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => r1 !== r2
+    });
+
+    this.dataSource = ds.cloneWithRows(jenkins);
   }
 
   componentDidMount() {
@@ -49,24 +66,33 @@ class MainScreen extends Component {
     this.props.clearAll();
   }
 
+  renderRow(jenkin) {
+    return (
+      <CoupaCard
+        title={jenkin.prId}
+        message={`${jenkin.status} - ${jenkin.context}`}
+        id={jenkin.prId}
+      //  onButtonPress={() => this.closeNotification.bind(this) }
+      />
+    );
+  }
+
   renderNotifications() {
     if (this.props.jenkins.length === 0) {
       return (
-        <Text style={styles.emptyLabel}>No notifications</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.emptyLabel}>No notifications</Text>
+        </View>
       );
     }
 
-    return this.props.jenkins.map((data, index) => {
-      return (
-        <CoupaCard
-          title={data.prId}
-          message={`${data.status} - ${data.context}`}
-          key={index}
-          onPress={() => this.closeNotification(data.prId)}
-          //onPress={this.closeNotification.bind(this)}
-        />
-      );
-    });
+    return (
+      <ListView
+        enableEmptySections
+        dataSource={this.dataSource}
+        renderRow={this.renderRow}
+      />
+    );
   }
 
   // for testing purposes
@@ -82,11 +108,9 @@ class MainScreen extends Component {
 
   render() {
     return (
-    //  <View style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.container}>
-          { this.renderNotifications() }
-        </ScrollView>
-        /*
+      <View style={{ flex: 1 }}>
+        { this.renderNotifications() }
+
         <Button
           style={styles.clearButton}
           backgroundColor='#3498db'
@@ -99,8 +123,7 @@ class MainScreen extends Component {
           title='Create notification'
           onPress={() => this.createNotification()}
         />
-        */
-    //  </View>
+      </View>
     );
   }
 }

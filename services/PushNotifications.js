@@ -5,7 +5,7 @@ import { Permissions, Notifications } from 'expo';
 
 export default async () => {
   const previousToken = await AsyncStorage.getItem('pushtoken');
-  console.log(`PREVIOUS TOKEN ${previousToken}`);
+  //console.log(`PREVIOUS TOKEN ${previousToken}`);
 
   if (previousToken) {
     return;
