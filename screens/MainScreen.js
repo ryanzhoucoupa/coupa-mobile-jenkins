@@ -80,7 +80,7 @@ class MainScreen extends Component {
   renderNotifications() {
     if (this.props.jenkins.length === 0) {
       return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={styles.emptyLabel}>No notifications</Text>
         </View>
       );
@@ -114,7 +114,7 @@ class MainScreen extends Component {
         <Button
           style={styles.clearButton}
           backgroundColor='#3498db'
-          title='Clear all notifications'
+          title={`Clear all notifications (${this.props.jenkins.length})`}
           onPress={() => this.clearAll()}
         />
         <Button
@@ -134,6 +134,7 @@ const styles = {
     flex: 1
   },
   emptyLabel: {
+    marginTop: 20,
     marginLeft: 20,
     fontSize: 18,
     fontWeight: 'bold'
