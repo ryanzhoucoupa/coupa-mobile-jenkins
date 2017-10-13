@@ -16,6 +16,7 @@ class CoupaCard extends Component {
         <Button
           style={styles.buttonStyle}
           title='Close'
+          backgroundColor='#e74c3c'
           onPress={() => this.props.deleteJenkinsData(id)}
         />
       </Card>
