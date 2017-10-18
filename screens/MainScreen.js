@@ -8,7 +8,8 @@ import {
   ListView
 } from 'react-native';
 import {
-  Button
+  Button,
+  Icon
 } from 'react-native-elements';
 import { connect } from 'react-redux';
 import registerForNotifications from '../services/PushNotifications';
@@ -23,8 +24,14 @@ const STATUS_COLORS = {
 
 class MainScreen extends Component {
   static navigationOptions = {
-    title: 'CJN',
-    headerLeft: null
+    title: 'Notifications',
+    headerLeft: null,
+    tabBarIcon: ({ tintColor }) => (
+      <Icon
+        name='notifications'
+        size={30}
+        color={tintColor}
+      />)
   };
 
   async componentWillMount() {
@@ -144,7 +151,7 @@ class MainScreen extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, marginTop: 20 }}>
         { this.renderNotifications() }
 
         <Button
