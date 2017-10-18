@@ -44,22 +44,32 @@ class MainScreen extends Component {
   componentDidMount() {
     registerForNotifications();
     Notifications.addListener((notification) => {
-      const { data: { url, context, prId, status }, origin } = notification;
-      console.log(`DATA ${prId}  ${origin}`);
+      const {
+        data: {
+          ghprbTargetBranch,
+          ghprbPullId,
+          comment,
+          url,
+          context,
+          status
+        },
+        origin } = notification;
+      console.log(`DATA ${ghprbPullId}  ${origin}`);
       console.log(notification);
+
       if (origin === 'received') {
-        this.props.updateJenkinsRecived({ url, context, prId, status });
+        this.props.updateJenkinsReceived({ ghprbTargetBranch, comment, url, context, ghprbPullId, status });
         Alert.alert(
           'You have a new notification',
-          prId,
+          ghprbPullId,
           [{ text: 'Ok' }]
         );
       }
     });
   }
 
-  closeNotification(prId) {
-    this.props.deleteJenkinsData(prId);
+  closeNotification(ghprbPullId) {
+    this.props.deleteJenkinsData(ghprbPullId);
   }
 
   clearAll() {
@@ -69,9 +79,9 @@ class MainScreen extends Component {
   renderRow(jenkin) {
     return (
       <CoupaCard
-        title={jenkin.prId}
+        title={jenkin.ghprbPullId}
         message={`${jenkin.status} - ${jenkin.context}`}
-        id={jenkin.prId}
+        id={jenkin.ghprbPullId}
       //  onButtonPress={() => this.closeNotification.bind(this) }
       />
     );
@@ -100,7 +110,7 @@ class MainScreen extends Component {
     const data = {
       url: 'http://somehwere',
       context: 'something happened',
-      prId: `${new Date().getTime()}`,
+      ghprbPullId: `${new Date().getTime()}`,
       status: 'green'
     };
     this.props.updateJenkinsReceived(data);

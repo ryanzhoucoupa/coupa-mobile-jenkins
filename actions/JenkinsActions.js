@@ -14,31 +14,28 @@ const fetchAndParseJenkinsData = async () => {
   return JSON.parse(jenkinsData);
 };
 // ====================================================
-export const clearAll = (prId) => async dispatch => {
+export const clearAll = () => async dispatch => {
   await AsyncStorage.setItem(JENKINS_DATA, '[]');
   dispatch({ type: JENKINS_DELETE_ALL });
 };
 
-export const deleteJenkinsData = (prId) => async dispatch => {
+export const deleteJenkinsData = (ghprbPullId) => async dispatch => {
   let jenkinsData = await fetchAndParseJenkinsData();
-  _.remove(jenkinsData, { prId });
-
-  //let jenkinsData = await AsyncStorage.getItem(JENKINS_DATA) || '[]';
-  //jenkinsData = JSON.parse(jenkinsData);
+  _.remove(jenkinsData, { ghprbPullId });
 
   await AsyncStorage.setItem(JENKINS_DATA, JSON.stringify(jenkinsData));
   dispatch({ type: JENKINS_DELETE, payload: jenkinsData });
 };
 
-export const updateJenkinsReceived = ({ url, context, prId, status }) => async dispatch => {
+export const updateJenkinsReceived = ({ ghprbTargetBranch, comment, url, context, ghprbPullId, status }) => async dispatch => {
   let jenkinsData = await fetchAndParseJenkinsData();
 
-  const index = _.findIndex(jenkinsData, { prId });
+  const index = _.findIndex(jenkinsData, { ghprbPullId });
 
   if (index > 0) {
-    jenkinsData.splice(index, 1, { url, context, prId, status });
+    jenkinsData.splice(index, 1, { ghprbTargetBranch, comment, url, context, ghprbPullId, status });
   } else {
-    jenkinsData.push({ url, context, prId, status });
+    jenkinsData.push({ ghprbTargetBranch, comment, url, context, ghprbPullId, status});
   }
 
   await AsyncStorage.setItem(JENKINS_DATA, JSON.stringify(jenkinsData));
