@@ -12,7 +12,7 @@ class CoupaCard extends Component {
     const { id, title, message } = this.props;
     return (
       <Card title={title}>
-        <Text>{message}</Text>
+        { this.props.children }
         <Button
           style={styles.buttonStyle}
           title='Close'

@@ -44,24 +44,15 @@ class MainScreen extends Component {
   componentDidMount() {
     registerForNotifications();
     Notifications.addListener((notification) => {
-      const {
-        data: {
-          ghprbTargetBranch,
-          ghprbPullId,
-          comment,
-          url,
-          context,
-          status
-        },
-        origin } = notification;
-      console.log(`DATA ${ghprbPullId}  ${origin}`);
+      const { data, origin } = notification;
+      console.log(`DATA ${data.ghprbPullId}  ${origin}`);
       console.log(notification);
 
       if (origin === 'received') {
-        this.props.updateJenkinsReceived({ ghprbTargetBranch, comment, url, context, ghprbPullId, status });
+        this.props.updateJenkinsReceived(data);
         Alert.alert(
           'You have a new notification',
-          ghprbPullId,
+          data.ghprbPullId,
           [{ text: 'Ok' }]
         );
       }
@@ -77,13 +68,17 @@ class MainScreen extends Component {
   }
 
   renderRow(jenkin) {
+    const data = jenkin.data;
+
     return (
       <CoupaCard
         title={jenkin.ghprbPullId}
-        message={`${jenkin.status} - ${jenkin.context}`}
         id={jenkin.ghprbPullId}
-      //  onButtonPress={() => this.closeNotification.bind(this) }
-      />
+      >
+        <View>
+          { data.map((row, idx) => <Text key={idx}>{row.context} - {row.status}</Text>) }
+        </View>
+      </CoupaCard>
     );
   }
 
@@ -108,10 +103,26 @@ class MainScreen extends Component {
   // for testing purposes
   createNotification() {
     const data = {
-      url: 'http://somehwere',
-      context: 'something happened',
-      ghprbPullId: `${new Date().getTime()}`,
-      status: 'green'
+      ghprbTargetBranch: 'master',
+      comment: 'Unit tests running',
+      url: 'https://jenkins2.coupadev.com/job/trigger-build-manually/10833/console',
+      context: 'ci/jenkins-unit',
+      ghprbPullId: '44687',
+    //  ghprbPullId: `${new Date().getTime()}`,
+      status: 'pending'
+    };
+    this.props.updateJenkinsReceived(data);
+  }
+
+  createNotification2() {
+    const data = {
+      ghprbTargetBranch: 'master',
+      comment: 'Unit tests running',
+      url: 'https://jenkins2.coupadev.com/job/trigger-build-manually/10833/console',
+      context: 'ci/jenkins-nodejs',
+      ghprbPullId: '44687',
+    //  ghprbPullId: `${new Date().getTime()}`,
+      status: 'success'
     };
     this.props.updateJenkinsReceived(data);
   }
@@ -132,6 +143,12 @@ class MainScreen extends Component {
           backgroundColor='#9b59b6'
           title='Create notification'
           onPress={() => this.createNotification()}
+        />
+        <Button
+          style={styles.clearButton}
+          backgroundColor='#9b59b6'
+          title='Create notification - succ'
+          onPress={() => this.createNotification2()}
         />
       </View>
     );

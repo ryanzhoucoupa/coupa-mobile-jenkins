@@ -27,15 +27,27 @@ export const deleteJenkinsData = (ghprbPullId) => async dispatch => {
   dispatch({ type: JENKINS_DELETE, payload: jenkinsData });
 };
 
-export const updateJenkinsReceived = ({ ghprbTargetBranch, comment, url, context, ghprbPullId, status }) => async dispatch => {
+export const updateJenkinsReceived = (data) => async dispatch => {
+  const { ghprbPullId, context } = data;
   let jenkinsData = await fetchAndParseJenkinsData();
+  /*
+  jenkinsData => [ {ghprbPullId, data...} ]
+  */
 
   const index = _.findIndex(jenkinsData, { ghprbPullId });
 
-  if (index > 0) {
-    jenkinsData.splice(index, 1, { ghprbTargetBranch, comment, url, context, ghprbPullId, status });
+  if (index >= 0) {
+    const jdArray = jenkinsData[index].data;
+    const dataIndex = _.findIndex(jdArray, { context });
+
+    if (dataIndex >= 0) {
+      jdArray.splice(dataIndex, 1, data);
+    } else {
+      jdArray.push(data);
+    }
+    //jenkinsData.splice(index, 1, jenkinsData[index]);
   } else {
-    jenkinsData.push({ ghprbTargetBranch, comment, url, context, ghprbPullId, status});
+    jenkinsData.push({ ghprbPullId, data: [data] });
   }
 
   await AsyncStorage.setItem(JENKINS_DATA, JSON.stringify(jenkinsData));
