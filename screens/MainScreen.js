@@ -3,15 +3,17 @@ import { Notifications } from 'expo';
 import {
   Alert,
   Text,
-  ScrollView,
   View,
-  ListView
+  ListView,
+  AsyncStorage,
+  RefreshControl
 } from 'react-native';
 import {
   Button,
   Icon
 } from 'react-native-elements';
 import { connect } from 'react-redux';
+import axios from 'axios';
 import registerForNotifications from '../services/PushNotifications';
 import CoupaCard from '../src/components/CoupaCard';
 import * as actions from '../actions';
@@ -33,6 +35,33 @@ class MainScreen extends Component {
         color={tintColor}
       />)
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      refreshing: false,
+    };
+  }
+
+  async _onRefresh() {
+    this.setState({ refreshing: true });
+    let pushToken = await AsyncStorage.getItem('pushtoken');
+    console.log(`ON REFRESH PUSH TOKEN ${pushToken}`);
+    axios.get(`https://fierce-meadow-67656.herokuapp.com/notifications/list?pt=${pushToken}`)
+      .then(response => {
+        const data = response.data;
+        if (data.length > 0) {
+          for (let i = 0; i < data.length; i++) {
+            this.props.updateJenkinsReceived(JSON.parse(data[i]));
+          }
+        }
+        this.setState({ refreshing: false });
+      })
+      .catch(err => {
+        console.log(err);
+        this.setState({ refreshing: false });
+      });
+  }
 
   async componentWillMount() {
     this.props.asyncLoadJenkinsFromStorage();
@@ -118,6 +147,12 @@ class MainScreen extends Component {
         enableEmptySections
         dataSource={this.dataSource}
         renderRow={this.renderRow}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh.bind(this)}
+          />
+        }
       />
     );
   }
