@@ -15,6 +15,12 @@ import registerForNotifications from '../services/PushNotifications';
 import CoupaCard from '../src/components/CoupaCard';
 import * as actions from '../actions';
 
+const STATUS_COLORS = {
+  success: '#2ecc71',
+  pending: '#f39c12',
+  failure: '#c0392b'
+};
+
 class MainScreen extends Component {
   static navigationOptions = {
     title: 'CJN',
@@ -72,11 +78,20 @@ class MainScreen extends Component {
 
     return (
       <CoupaCard
-        title={jenkin.ghprbPullId}
+        title={`PR ID - ${jenkin.ghprbPullId}`}
         id={jenkin.ghprbPullId}
       >
         <View>
-          { data.map((row, idx) => <Text key={idx}>{row.context} - {row.status}</Text>) }
+          {
+            data.map((row, idx) =>
+              <Text
+                style={{ color: STATUS_COLORS[row.status] }}
+                key={idx}
+              >
+                {row.context} - {row.status}
+              </Text>
+            )
+          }
         </View>
       </CoupaCard>
     );
