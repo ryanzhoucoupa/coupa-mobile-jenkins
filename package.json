@@ -9,6 +9,7 @@
     "axios": "^0.16.2",
     "expo": "^21.0.0",
     "lodash": "^4.17.4",
+    "qs": "^6.5.1",
     "react": "16.0.0-alpha.12",
     "react-native": "https://github.com/expo/react-native/archive/sdk-21.0.2.tar.gz",
     "react-native-elements": "^0.17.0",

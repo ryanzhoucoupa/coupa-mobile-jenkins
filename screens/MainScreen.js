@@ -5,6 +5,7 @@ import {
   Text,
   View,
   ListView,
+  ScrollView,
   AsyncStorage,
   RefreshControl
 } from 'react-native';
@@ -17,6 +18,11 @@ import axios from 'axios';
 import registerForNotifications from '../services/PushNotifications';
 import CoupaCard from '../src/components/CoupaCard';
 import * as actions from '../actions';
+
+import {
+  GITHUB_LOGIN,
+  LIST_NOTIFICATION_ENDPOINT
+} from '../src/constants';
 
 const STATUS_COLORS = {
   success: '#2ecc71',
@@ -45,15 +51,12 @@ class MainScreen extends Component {
 
   async _onRefresh() {
     this.setState({ refreshing: true });
-    let pushToken = await AsyncStorage.getItem('pushtoken');
-    console.log(`ON REFRESH PUSH TOKEN ${pushToken}`);
-    axios.get(`https://fierce-meadow-67656.herokuapp.com/notifications/list?pt=${pushToken}`)
+    let githubLogin = await AsyncStorage.getItem(GITHUB_LOGIN);
+    axios.get(`${LIST_NOTIFICATION_ENDPOINT}?github_login=${githubLogin}`)
       .then(response => {
         const data = response.data;
         if (data.length > 0) {
-          for (let i = 0; i < data.length; i++) {
-            this.props.updateJenkinsReceived(JSON.parse(data[i]));
-          }
+          this.props.updateJenkinsFetched(data);
         }
         this.setState({ refreshing: false });
       })
@@ -136,9 +139,18 @@ class MainScreen extends Component {
   renderNotifications() {
     if (this.props.jenkins.length === 0) {
       return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }
+        >
           <Text style={styles.emptyLabel}>No notifications</Text>
-        </View>
+        </ScrollView>
       );
     }
 

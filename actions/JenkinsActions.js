@@ -27,6 +27,14 @@ export const deleteJenkinsData = (ghprbPullId) => async dispatch => {
   dispatch({ type: JENKINS_DELETE, payload: jenkinsData });
 };
 
+export const updateJenkinsFetched = (data) => async dispatch => {
+  await AsyncStorage.setItem(JENKINS_DATA, JSON.stringify(data));
+  dispatch({
+    type: JENKINS_UPDATE_RECEIVED,
+    payload: data
+  });
+};
+
 export const updateJenkinsReceived = (data) => async dispatch => {
   const { ghprbPullId, context } = data;
   let jenkinsData = await fetchAndParseJenkinsData();
@@ -34,23 +42,27 @@ export const updateJenkinsReceived = (data) => async dispatch => {
   jenkinsData => [ {ghprbPullId, data...} ]
   */
 
-  const index = _.findIndex(jenkinsData, { ghprbPullId });
+  try {
+    const index = _.findIndex(jenkinsData, { ghprbPullId });
 
-  if (index >= 0) {
-    const jdArray = jenkinsData[index].data;
-    const dataIndex = _.findIndex(jdArray, { context });
+    if (index >= 0) {
+      const jdArray = jenkinsData[index].data;
+      const dataIndex = _.findIndex(jdArray, { context });
 
-    if (dataIndex >= 0) {
-      jdArray.splice(dataIndex, 1, data);
+      if (dataIndex >= 0) {
+        jdArray.splice(dataIndex, 1, data);
+      } else {
+        jdArray.push(data);
+      }
+      //jenkinsData.splice(index, 1, jenkinsData[index]);
     } else {
-      jdArray.push(data);
+      jenkinsData.push({ ghprbPullId, data: [data] });
     }
-    //jenkinsData.splice(index, 1, jenkinsData[index]);
-  } else {
-    jenkinsData.push({ ghprbPullId, data: [data] });
-  }
 
-  await AsyncStorage.setItem(JENKINS_DATA, JSON.stringify(jenkinsData));
+    await AsyncStorage.setItem(JENKINS_DATA, JSON.stringify(jenkinsData));
+  } catch (error) {
+    console.log(error);
+  }
 
   dispatch({
     type: JENKINS_UPDATE_RECEIVED,
@@ -59,6 +71,7 @@ export const updateJenkinsReceived = (data) => async dispatch => {
 };
 
 export const asyncLoadJenkinsFromStorage = () => async dispatch => {
+//  await AsyncStorage.setItem(JENKINS_DATA, '[]');
   let jenkinsData = await fetchAndParseJenkinsData();
 
   dispatch({
