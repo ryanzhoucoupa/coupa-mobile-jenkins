@@ -90,16 +90,17 @@ class MainScreen extends Component {
     registerForNotifications();
     Notifications.addListener((notification) => {
       const { data, origin } = notification;
-      console.log(`DATA ${data.ghprbPullId}  ${origin}`);
+      //console.log(`DATA ${data.ghprbPullId}  ${data.data}`);
       console.log(notification);
-
       if (origin === 'received') {
         this.props.updateJenkinsReceived(data);
+/*
         Alert.alert(
           'You have a new notification',
           data.ghprbPullId,
           [{ text: 'Ok' }]
         );
+*/
       }
     });
   }
@@ -172,13 +173,33 @@ class MainScreen extends Component {
   // for testing purposes
   createNotification() {
     const data = {
-      ghprbTargetBranch: 'master',
-      comment: 'Unit tests running',
-      url: 'https://jenkins2.coupadev.com/job/trigger-build-manually/10833/console',
-      context: 'ci/jenkins-unit',
       ghprbPullId: '44687',
-    //  ghprbPullId: `${new Date().getTime()}`,
-      status: 'pending'
+      data: [
+        {
+          ghprbTargetBranch: 'master',
+          comment: 'First run: 43/37,007 failed. 0 on retry. FLAKY TESTS. Full unit test run',
+          url: 'https://jenkins2.coupadev.com/job/trigger-build-manually/10981/console',
+          context: 'ci/jenkins-unit',
+          ghprbPullId: '44687',
+          status: 'success'
+        },
+        {
+          ghprbTargetBranch: 'master',
+          comment: 'API tests pending',
+          url: 'https://jenkins2.coupadev.com/job/trigger-build-manually/10981/console',
+          context: 'ci/api-test',
+          ghprbPullId: '44687',
+          status: 'pending'
+        },
+        {
+          ghprbTargetBranch: 'master',
+          comment: '1347 passed in 4.537 secs',
+          url: 'https://jenkins2.coupadev.com/job/trigger-build-manually/10981/artifact/tmp/node-test-ci.log',
+          context: 'ci/jenkins-nodejs',
+          ghprbPullId: '44687',
+          status: 'success'
+        }
+      ]
     };
     this.props.updateJenkinsReceived(data);
   }

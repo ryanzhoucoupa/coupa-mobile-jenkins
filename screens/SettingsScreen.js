@@ -45,6 +45,7 @@ class SettingsScreen extends Component {
           value={this.props.githubLogin}
           onChangeText={value => this.props.formTextInputUpdate({ prop: 'githubLogin', value })}
         />
+        <Text>{this.props.expoPushToken}</Text>
         <FormValidationMessage>{ this.props.errorMessage }</FormValidationMessage>
         <Button
           title='Save'
@@ -56,8 +57,8 @@ class SettingsScreen extends Component {
 }
 
 const mapStateToProps = ({ forms }) => {
-  const { githubLogin, errorMessage } = forms;
-  return { githubLogin, errorMessage };
+  const { githubLogin, errorMessage, expoPushToken } = forms;
+  return { githubLogin, expoPushToken, errorMessage };
 };
 
 export default connect(mapStateToProps, actions)(SettingsScreen);

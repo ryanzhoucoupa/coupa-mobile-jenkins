@@ -1,10 +1,11 @@
 import { AsyncStorage } from 'react-native';
 import { Permissions, Notifications } from 'expo';
-
-//const PUSH_ENDPOINT = 'https://rallycoding.herokuapp.com/api/tokens';
+import {
+  EXPO_PUSH_TOKEN
+} from '../src/constants';
 
 export default async () => {
-  const previousToken = await AsyncStorage.getItem('pushtoken');
+  const previousToken = await AsyncStorage.getItem(EXPO_PUSH_TOKEN);
   console.log(`PREVIOUS TOKEN ${previousToken}`);
 
   if (previousToken) {
@@ -18,6 +19,6 @@ export default async () => {
 
     let token = await Notifications.getExpoPushTokenAsync();
 //    await axios.post(PUSH_ENDPOINT, { token: { token } });
-    await AsyncStorage.setItem('pushtoken', token);
+    await AsyncStorage.setItem(EXPO_PUSH_TOKEN, token);
   }
 };

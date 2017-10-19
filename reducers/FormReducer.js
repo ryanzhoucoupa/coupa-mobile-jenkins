@@ -12,7 +12,7 @@ const INITIAL_FORM = {
 export default function (state = INITIAL_FORM, action) {
   switch (action.type) {
     case FETCH_GITHUB_LOGIN:
-      return { ...state, githubLogin: action.payload };
+      return { ...state, ...action.payload };
     case FORM_GITHUB_LOGIN_UPDATE:
       return { ...action.payload, [action.payload.prop]: action.payload.value };
     case FORM_GITHUB_LOGIN_SUCCESS:

@@ -35,8 +35,7 @@ export const updateJenkinsFetched = (data) => async dispatch => {
   });
 };
 
-export const updateJenkinsReceived = (data) => async dispatch => {
-  const { ghprbPullId, context } = data;
+export const updateJenkinsReceived = ({ ghprbPullId, data }) => async dispatch => {
   let jenkinsData = await fetchAndParseJenkinsData();
   /*
   jenkinsData => [ {ghprbPullId, data...} ]
@@ -46,17 +45,9 @@ export const updateJenkinsReceived = (data) => async dispatch => {
     const index = _.findIndex(jenkinsData, { ghprbPullId });
 
     if (index >= 0) {
-      const jdArray = jenkinsData[index].data;
-      const dataIndex = _.findIndex(jdArray, { context });
-
-      if (dataIndex >= 0) {
-        jdArray.splice(dataIndex, 1, data);
-      } else {
-        jdArray.push(data);
-      }
-      //jenkinsData.splice(index, 1, jenkinsData[index]);
+      jenkinsData[index].data = data;
     } else {
-      jenkinsData.push({ ghprbPullId, data: [data] });
+      jenkinsData.push({ ghprbPullId, data });
     }
 
     await AsyncStorage.setItem(JENKINS_DATA, JSON.stringify(jenkinsData));

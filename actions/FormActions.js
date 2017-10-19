@@ -12,15 +12,20 @@ import {
 } from './types';
 import {
   GITHUB_LOGIN,
-  CREATE_USER_ENDPOINT
+  CREATE_USER_ENDPOINT,
+  EXPO_PUSH_TOKEN
 } from '../src/constants';
 
 export const fetchGithubLogin = () => async dispatch => {
   let githubLogin = await AsyncStorage.getItem(GITHUB_LOGIN);
+  let expoPushToken = '';
+
+  try { expoPushToken = await AsyncStorage.getItem(EXPO_PUSH_TOKEN); }
+  catch (error) { console.log(error); }
 
   dispatch({
     type: FETCH_GITHUB_LOGIN,
-    payload: githubLogin
+    payload: { githubLogin, expoPushToken }
   });
 };
 
@@ -33,7 +38,7 @@ export const formTextInputUpdate = ({ prop, value }) => {
 
 export const saveUserInfo = (githubLogin) => async dispatch => {
   await AsyncStorage.setItem(GITHUB_LOGIN, githubLogin);
-  let pushToken = 'ExponentPushToken[I6V1BMNG6kuHhPk73wJqkR]'; //= await Notifications.getExpoPushTokenAsync();
+  let pushToken = await AsyncStorage.getItem(EXPO_PUSH_TOKEN);
 
   const payload = qs.stringify({
     github_login: githubLogin,
