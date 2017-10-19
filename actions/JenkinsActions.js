@@ -28,15 +28,22 @@ export const deleteJenkinsData = (ghprbPullId) => async dispatch => {
 };
 
 export const updateJenkinsFetched = (data) => async dispatch => {
-  await AsyncStorage.setItem(JENKINS_DATA, JSON.stringify(data));
+  const updates = data;
+  const updatedAt = new Date();
+
+  for (let i = 0; i < updates.length; i++) {
+    updates[i].updatedAt = updatedAt;
+  }
+  await AsyncStorage.setItem(JENKINS_DATA, JSON.stringify(updates));
   dispatch({
     type: JENKINS_UPDATE_RECEIVED,
-    payload: data
+    payload: updates
   });
 };
 
 export const updateJenkinsReceived = ({ ghprbPullId, data }) => async dispatch => {
   let jenkinsData = await fetchAndParseJenkinsData();
+  const updatedAt = new Date();
   /*
   jenkinsData => [ {ghprbPullId, data...} ]
   */
@@ -46,8 +53,9 @@ export const updateJenkinsReceived = ({ ghprbPullId, data }) => async dispatch =
 
     if (index >= 0) {
       jenkinsData[index].data = data;
+      jenkinsData[index].updatedAt = updatedAt;
     } else {
-      jenkinsData.push({ ghprbPullId, data });
+      jenkinsData.push({ ghprbPullId, data, updatedAt });
     }
 
     await AsyncStorage.setItem(JENKINS_DATA, JSON.stringify(jenkinsData));

@@ -15,6 +15,7 @@ import {
 } from 'react-native-elements';
 import { connect } from 'react-redux';
 import axios from 'axios';
+import TimeAgo from 'react-native-timeago';
 import registerForNotifications from '../services/PushNotifications';
 import CoupaCard from '../src/components/CoupaCard';
 import * as actions from '../actions';
@@ -132,6 +133,7 @@ class MainScreen extends Component {
               </Text>
             )
           }
+        <Text>{`Last updated - `}<TimeAgo time={jenkin.updatedAt} /></Text>
         </View>
       </CoupaCard>
     );
