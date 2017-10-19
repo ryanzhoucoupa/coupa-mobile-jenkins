@@ -11,21 +11,17 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 
 class SettingsScreen extends Component {
-  static navigationOptions = {
+  static navigationOptions = ({ navigation, screenProps }) => ({
     title: 'Settings',
     headerLeft: null,
+    headerRight: null,
     tabBarIcon: ({ tintColor }) => (
       <Icon
         name='settings'
         size={30}
         color={tintColor}
       />),
-    header: {
-      style: {
-        marginTop: Platform.OS === 'android' ? 24 : 0
-      }
-    }
-  };
+  });
 
   async componentDidMount() {
     this.props.fetchGithubLogin();
@@ -40,6 +36,7 @@ class SettingsScreen extends Component {
       <View style={{ marginTop: 20 }}>
         <FormLabel>Github Account</FormLabel>
         <FormInput
+          disabled
           placeholder='Github Account'
           autoCapitalize='none'
           value={this.props.githubLogin}
@@ -48,17 +45,23 @@ class SettingsScreen extends Component {
         <Text>{this.props.expoPushToken}</Text>
         <FormValidationMessage>{ this.props.errorMessage }</FormValidationMessage>
         <Button
-          title='Save'
-          onPress={() => this.saveUserInfo()}
+          title='Register'
+          onPress={() => this.props.navigation.navigate('Camera')}
+        />
+        <Button
+          title="Clear"
+          onPress={() => this.props.logOut()}
         />
       </View>
     );
   }
 }
 
-const mapStateToProps = ({ forms }) => {
-  const { githubLogin, errorMessage, expoPushToken } = forms;
-  return { githubLogin, expoPushToken, errorMessage };
+const mapStateToProps = ({ register }) => {
+//  const { githubLogin, errorMessage, expoPushToken } = forms;
+//  return { githubLogin, expoPushToken, errorMessage };
+  const { githubLogin, errorMessage } = register;
+  return { githubLogin, errorMessage };
 };
 
 export default connect(mapStateToProps, actions)(SettingsScreen);

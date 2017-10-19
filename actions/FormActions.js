@@ -16,6 +16,11 @@ import {
   EXPO_PUSH_TOKEN
 } from '../src/constants';
 
+export const logOut = () => async dispatch => {
+  await AsyncStorage.removeItem(GITHUB_LOGIN);
+  dispatch({ type: FORM_GITHUB_LOGIN_SUCCESS, payload: '' })
+};
+
 export const fetchGithubLogin = () => async dispatch => {
   let githubLogin = await AsyncStorage.getItem(GITHUB_LOGIN);
   let expoPushToken = '';
