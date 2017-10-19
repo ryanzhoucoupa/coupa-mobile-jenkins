@@ -22,13 +22,17 @@ import * as actions from '../actions';
 
 import {
   GITHUB_LOGIN,
-  LIST_NOTIFICATION_ENDPOINT
+  LIST_NOTIFICATION_ENDPOINT,
+  COLOR_BLUE,
+  COLOR_ORANGE,
+  COLOR_RED,
+  COLOR_GREEN
 } from '../src/constants';
 
 const STATUS_COLORS = {
-  success: '#2ecc71',
-  pending: '#f39c12',
-  failure: '#c0392b'
+  success: COLOR_GREEN,
+  pending: COLOR_ORANGE,
+  failure: COLOR_RED
 };
 
 class MainScreen extends Component {
@@ -226,21 +230,9 @@ class MainScreen extends Component {
 
         <Button
           style={styles.clearButton}
-          backgroundColor='#3498db'
+          backgroundColor={COLOR_BLUE}
           title={`Clear all notifications (${this.props.jenkins.length})`}
           onPress={() => this.clearAll()}
-        />
-        <Button
-          style={styles.clearButton}
-          backgroundColor='#9b59b6'
-          title='Create notification'
-          onPress={() => this.createNotification()}
-        />
-        <Button
-          style={styles.clearButton}
-          backgroundColor='#9b59b6'
-          title='Create notification - succ'
-          onPress={() => this.createNotification2()}
         />
       </View>
     );

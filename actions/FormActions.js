@@ -1,14 +1,16 @@
 import {
-  AsyncStorage,
-  Notifications
+  AsyncStorage
  } from 'react-native';
 import axios from 'axios';
 import qs from 'qs';
 import {
   FETCH_GITHUB_LOGIN,
+  FORM_CLEAR,
   FORM_GITHUB_LOGIN_UPDATE,
   FORM_GITHUB_LOGIN_SUCCESS,
-  FORM_GITHUB_LOGIN_FAIL
+  FORM_GITHUB_LOGIN_FAIL,
+  REGISTER_SUCCESS,
+  REGISTER_FAIL
 } from './types';
 import {
   GITHUB_LOGIN,
@@ -17,8 +19,35 @@ import {
 } from '../src/constants';
 
 export const logOut = () => async dispatch => {
-  await AsyncStorage.removeItem(GITHUB_LOGIN);
-  dispatch({ type: FORM_GITHUB_LOGIN_SUCCESS, payload: '' })
+  await AsyncStorage.setItem(GITHUB_LOGIN, '');
+  dispatch({ type: FORM_CLEAR });
+};
+
+export const readQrCode = (qrCode) => async dispatch => {
+  try {
+    const split = qrCode.split('?');
+    const parsed = qs.parse(split[1]);
+    const githubLogin = parsed.ghUser;
+    console.log(`QR CODE= ${qrCode}`);
+    await AsyncStorage.setItem(GITHUB_LOGIN, githubLogin);
+    let pushToken = await AsyncStorage.getItem(EXPO_PUSH_TOKEN);
+
+    const payload = qs.stringify({
+      github_login: githubLogin,
+      expo_push_token: pushToken
+    });
+
+    axios.put(split[0], payload)
+      .then(response => {
+        dispatch({ type: REGISTER_SUCCESS, payload: githubLogin });
+      })
+      .catch(error => {
+        console.log(error);
+        dispatch({ type: REGISTER_FAIL, payload: 'Unable to register device' });
+      })
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 export const fetchGithubLogin = () => async dispatch => {

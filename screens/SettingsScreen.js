@@ -9,6 +9,10 @@ import {
 } from 'react-native-elements';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
+import {
+  COLOR_RED,
+  COLOR_GREEN
+} from '../src/constants';
 
 class SettingsScreen extends Component {
   static navigationOptions = ({ navigation, screenProps }) => ({
@@ -42,14 +46,17 @@ class SettingsScreen extends Component {
           value={this.props.githubLogin}
           onChangeText={value => this.props.formTextInputUpdate({ prop: 'githubLogin', value })}
         />
-        <Text>{this.props.expoPushToken}</Text>
+        <Text>{}</Text>
         <FormValidationMessage>{ this.props.errorMessage }</FormValidationMessage>
         <Button
           title='Register'
+          backgroundColor={COLOR_GREEN}
           onPress={() => this.props.navigation.navigate('Camera')}
+          style={{marginBottom: 10}}
         />
         <Button
-          title="Clear"
+          title="Logout"
+          backgroundColor={COLOR_RED}
           onPress={() => this.props.logOut()}
         />
       </View>
@@ -57,11 +64,9 @@ class SettingsScreen extends Component {
   }
 }
 
-const mapStateToProps = ({ register }) => {
-//  const { githubLogin, errorMessage, expoPushToken } = forms;
-//  return { githubLogin, expoPushToken, errorMessage };
-  const { githubLogin, errorMessage } = register;
-  return { githubLogin, errorMessage };
+const mapStateToProps = ({ forms }) => {
+  const { githubLogin, errorMessage, expoPushToken } = forms;
+  return { githubLogin, expoPushToken, errorMessage };
 };
 
 export default connect(mapStateToProps, actions)(SettingsScreen);
