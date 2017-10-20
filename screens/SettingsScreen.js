@@ -35,7 +35,25 @@ class SettingsScreen extends Component {
     this.props.saveUserInfo(this.props.githubLogin);
   }
 
+  logOut() {
+    this.props.logOut();
+    this.props.clearAll();
+  }
+
+  renderLogOutButton() {
+    const loggedIn = (this.props.githubLogin || '') !== '';
+
+    if (loggedIn) {
+      return (<Button
+        title="Logout"
+        backgroundColor={COLOR_RED}
+        onPress={() => this.logOut()}
+      />);
+    }
+  }
+
   render() {
+    const registered = (this.props.githubLogin || '') === '' ? 'camera' : 'check';
     return (
       <View style={{ marginTop: 20 }}>
         <FormLabel>Github Account</FormLabel>
@@ -49,16 +67,13 @@ class SettingsScreen extends Component {
         <Text>{}</Text>
         <FormValidationMessage>{ this.props.errorMessage }</FormValidationMessage>
         <Button
-          title='Register'
+          icon={{ name: registered }}
+          title='Register Device'
           backgroundColor={COLOR_GREEN}
           onPress={() => this.props.navigation.navigate('Camera')}
-          style={{marginBottom: 10}}
+          style={{ marginBottom: 20 }}
         />
-        <Button
-          title="Logout"
-          backgroundColor={COLOR_RED}
-          onPress={() => this.props.logOut()}
-        />
+        { this.renderLogOutButton() }
       </View>
     );
   }

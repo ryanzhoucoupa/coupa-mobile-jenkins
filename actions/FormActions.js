@@ -19,7 +19,7 @@ import {
 } from '../src/constants';
 
 export const logOut = () => async dispatch => {
-  await AsyncStorage.setItem(GITHUB_LOGIN, '');
+  await AsyncStorage.clear();
   dispatch({ type: FORM_CLEAR });
 };
 

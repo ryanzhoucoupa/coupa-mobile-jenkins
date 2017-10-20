@@ -7,6 +7,10 @@ import {
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 
+import {
+  COLOR_RED
+} from '../constants';
+
 class CoupaCard extends Component {
   render() {
     const { id, title, message } = this.props;
@@ -14,9 +18,10 @@ class CoupaCard extends Component {
       <Card title={title}>
         { this.props.children }
         <Button
+          icon={{ name: 'close' }}
           style={styles.buttonStyle}
           title='Close'
-          backgroundColor='#e74c3c'
+          backgroundColor={COLOR_RED}
           onPress={() => this.props.deleteJenkinsData(id)}
         />
       </Card>

@@ -12,6 +12,11 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 
 class CameraScreen extends Component {
+  static navigationOptions = ({ navigation, screenProps }) => ({
+    title: 'Camera',
+    tabBarVisible: false
+  });
+
   state = {
     hasCameraPermission: null,
     lastScannedUrl: null,
@@ -19,6 +24,7 @@ class CameraScreen extends Component {
 
   componentDidMount() {
     this._requestCameraPermission();
+    this.setState({ lastScannedUrl: null });
   }
 
   _requestCameraPermission = async () => {
@@ -29,10 +35,12 @@ class CameraScreen extends Component {
   };
 
   _handleBarCodeRead = result => {
-    LayoutAnimation.spring();
-    this.props.readQrCode(result.data);
+    if (result.data !== this.state.lastScannedUrl) {
+      LayoutAnimation.spring();
+      this.setState({ lastScannedUrl: result.data });
+      this.props.readQrCode(result.data);
       this.props.navigation.navigate('Settings');
-  //  }
+    }
   };
 
   render() {
