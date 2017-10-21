@@ -40,7 +40,7 @@ class SettingsScreen extends Component {
     this.props.clearAll();
   }
 
-  renderLogOutButton() {
+  renderRegisterOrLogOutButton() {
     const loggedIn = (this.props.githubLogin || '') !== '';
 
     if (loggedIn) {
@@ -50,10 +50,17 @@ class SettingsScreen extends Component {
         onPress={() => this.logOut()}
       />);
     }
+
+    return (<Button
+      icon={{ name: 'camera' }}
+      title='Register Device'
+      backgroundColor={COLOR_GREEN}
+      onPress={() => this.props.navigation.navigate('Camera')}
+      style={{ marginBottom: 20 }}
+    />);
   }
 
   render() {
-    const registered = (this.props.githubLogin || '') === '' ? 'camera' : 'check';
     return (
       <View style={{ marginTop: 20 }}>
         <FormLabel>Github Account</FormLabel>
@@ -66,14 +73,7 @@ class SettingsScreen extends Component {
         />
         <Text>{}</Text>
         <FormValidationMessage>{ this.props.errorMessage }</FormValidationMessage>
-        <Button
-          icon={{ name: registered }}
-          title='Register Device'
-          backgroundColor={COLOR_GREEN}
-          onPress={() => this.props.navigation.navigate('Camera')}
-          style={{ marginBottom: 20 }}
-        />
-        { this.renderLogOutButton() }
+        { this.renderRegisterOrLogOutButton() }
       </View>
     );
   }

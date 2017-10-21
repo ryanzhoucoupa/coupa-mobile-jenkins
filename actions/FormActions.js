@@ -15,12 +15,23 @@ import {
 import {
   GITHUB_LOGIN,
   CREATE_USER_ENDPOINT,
+  UNREGISTER_DEVICE_ENDPOINT,
   EXPO_PUSH_TOKEN
 } from '../src/constants';
 
 export const logOut = () => async dispatch => {
-  await AsyncStorage.clear();
-  dispatch({ type: FORM_CLEAR });
+  let githubLogin = await AsyncStorage.getItem(GITHUB_LOGIN);
+  const payload = qs.stringify({ github_login: githubLogin });
+
+  axios.put(UNREGISTER_DEVICE_ENDPOINT, payload)
+    .then(response => {
+      AsyncStorage.clear()
+        .then(resp => dispatch({ type: FORM_CLEAR }));
+    })
+    .catch(error => {
+      console.log(error);
+      dispatch({ type: REGISTER_FAIL, payload: 'Unable to unregister device' });
+    });
 };
 
 export const readQrCode = (qrCode) => async dispatch => {

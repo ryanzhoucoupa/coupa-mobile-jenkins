@@ -7,6 +7,7 @@ import {
   ListView,
   ScrollView,
   AsyncStorage,
+  AppState,
   RefreshControl
 } from 'react-native';
 import {
@@ -95,17 +96,19 @@ class MainScreen extends Component {
     registerForNotifications();
     Notifications.addListener((notification) => {
       const { data, origin } = notification;
+      const ghprbPullId = data.ghprbPullId;
       //console.log(`DATA ${data.ghprbPullId}  ${data.data}`);
       console.log(notification);
       if (origin === 'received') {
         this.props.updateJenkinsReceived(data);
-/*
-        Alert.alert(
-          'You have a new notification',
-          data.ghprbPullId,
-          [{ text: 'Ok' }]
-        );
-*/
+
+        if (AppState.currentState === 'background') {
+          Alert.alert(
+            'Jenkins Status',
+            `Status change for PR: ${ghprbPullId}`,
+            [{ text: 'Ok' }]
+          );
+        }
       }
     });
   }
