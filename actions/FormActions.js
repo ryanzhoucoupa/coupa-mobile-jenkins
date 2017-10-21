@@ -1,6 +1,9 @@
 import {
   AsyncStorage
  } from 'react-native';
+ import {
+   Notifications
+ } from 'expo';
 import axios from 'axios';
 import qs from 'qs';
 import {
@@ -15,8 +18,7 @@ import {
 import {
   GITHUB_LOGIN,
   CREATE_USER_ENDPOINT,
-  UNREGISTER_DEVICE_ENDPOINT,
-  EXPO_PUSH_TOKEN
+  UNREGISTER_DEVICE_ENDPOINT
 } from '../src/constants';
 
 export const logOut = () => async dispatch => {
@@ -41,7 +43,7 @@ export const readQrCode = (qrCode) => async dispatch => {
     const githubLogin = parsed.ghUser;
     console.log(`QR CODE= ${qrCode}`);
     await AsyncStorage.setItem(GITHUB_LOGIN, githubLogin);
-    let pushToken = await AsyncStorage.getItem(EXPO_PUSH_TOKEN);
+    let pushToken = await Notifications.getExpoPushTokenAsync();
 
     const payload = qs.stringify({
       github_login: githubLogin,
@@ -65,7 +67,7 @@ export const fetchGithubLogin = () => async dispatch => {
   let githubLogin = await AsyncStorage.getItem(GITHUB_LOGIN);
   let expoPushToken = '';
 
-  try { expoPushToken = await AsyncStorage.getItem(EXPO_PUSH_TOKEN); }
+  try { expoPushToken = await Notifications.getExpoPushTokenAsync(); }
   catch (error) { console.log(error); }
 
   dispatch({
@@ -83,7 +85,7 @@ export const formTextInputUpdate = ({ prop, value }) => {
 
 export const saveUserInfo = (githubLogin) => async dispatch => {
   await AsyncStorage.setItem(GITHUB_LOGIN, githubLogin);
-  let pushToken = await AsyncStorage.getItem(EXPO_PUSH_TOKEN);
+  let pushToken = await Notifications.getExpoPushTokenAsync();
 
   const payload = qs.stringify({
     github_login: githubLogin,
