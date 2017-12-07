@@ -8,7 +8,8 @@ import {
   ScrollView,
   AsyncStorage,
   AppState,
-  RefreshControl
+  RefreshControl,
+  Platform
 } from 'react-native';
 import {
   Button,
@@ -133,14 +134,27 @@ class MainScreen extends Component {
           {
             data.map((row, idx) =>
               <Text
-                style={{ color: STATUS_COLORS[row.status] }}
+                style={
+                  {
+                    color: STATUS_COLORS[row.status],
+                    fontWeight: 'bold',
+                    fontSize: 16
+                  }
+                }
                 key={idx}
               >
                 {row.context} - {row.status}
               </Text>
             )
           }
-        <Text>{`Last updated - `}<TimeAgo time={jenkin.updatedAt} /></Text>
+        <Text style={
+          {
+            marginBottom: (Platform.OS === 'ios') ? 0 : 15
+          }
+        }
+        >
+          {`Last updated - `}<TimeAgo time={jenkin.updatedAt} />
+        </Text>
         </View>
       </CoupaCard>
     );
@@ -234,7 +248,7 @@ class MainScreen extends Component {
         <Button
           style={styles.clearButton}
           backgroundColor={COLOR_BLUE}
-          title={`Clear all notifications (${this.props.jenkins.length})`}
+          title={`Clear all (${this.props.jenkins.length})`}
           onPress={() => this.clearAll()}
         />
       </View>

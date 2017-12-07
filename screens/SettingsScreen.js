@@ -63,12 +63,13 @@ class SettingsScreen extends Component {
   render() {
     return (
       <View style={{ marginTop: 20 }}>
-        <FormLabel>Github Account</FormLabel>
+        <FormLabel labelStyle={{ fontSize: 30 }}>Github Account</FormLabel>
         <FormInput
           disabled
           placeholder='Github Account'
           autoCapitalize='none'
           value={this.props.githubLogin}
+          style={ styles.inputStyles }
           onChangeText={value => this.props.formTextInputUpdate({ prop: 'githubLogin', value })}
         />
         <Text>{}</Text>
@@ -78,6 +79,13 @@ class SettingsScreen extends Component {
     );
   }
 }
+
+const styles = {
+  inputStyles: {
+    fontSize: 16,
+    padding: (Platform.OS === 'ios') ? 0 : 10
+  }
+};
 
 const mapStateToProps = ({ forms }) => {
   const { githubLogin, errorMessage, expoPushToken } = forms;
