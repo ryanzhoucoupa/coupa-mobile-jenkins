@@ -9,7 +9,8 @@ import {
   AsyncStorage,
   AppState,
   RefreshControl,
-  Platform
+  Platform,
+  TouchableOpacity
 } from 'react-native';
 import {
   Button,
@@ -17,7 +18,6 @@ import {
 } from 'react-native-elements';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import TimeAgo from 'react-native-timeago';
 import registerForNotifications from '../services/PushNotifications';
 import CoupaCard from '../src/components/CoupaCard';
 import * as actions from '../actions';
@@ -129,6 +129,7 @@ class MainScreen extends Component {
       <CoupaCard
         title={`PR ID - ${jenkin.ghprbPullId}`}
         id={jenkin.ghprbPullId}
+        timeAgo={jenkin.updatedAt}
       >
         <View>
           {
@@ -147,14 +148,6 @@ class MainScreen extends Component {
               </Text>
             )
           }
-        <Text style={
-          {
-            marginBottom: (Platform.OS === 'ios') ? 0 : 15
-          }
-        }
-        >
-          {`Last updated - `}<TimeAgo time={jenkin.updatedAt} />
-        </Text>
         </View>
       </CoupaCard>
     );
@@ -195,15 +188,17 @@ class MainScreen extends Component {
 
   // for testing purposes
   createNotification() {
+    const count = this.props.jenkins.length + 1;
+
     const data = {
-      ghprbPullId: '44687',
+      ghprbPullId: count,
       data: [
         {
           ghprbTargetBranch: 'master',
           comment: 'First run: 43/37,007 failed. 0 on retry. FLAKY TESTS. Full unit test run',
           url: 'https://jenkins2.coupadev.com/job/trigger-build-manually/10981/console',
           context: 'ci/jenkins-unit',
-          ghprbPullId: '44687',
+          ghprbPullId: count,
           status: 'success'
         },
         {
@@ -211,7 +206,7 @@ class MainScreen extends Component {
           comment: 'API tests pending',
           url: 'https://jenkins2.coupadev.com/job/trigger-build-manually/10981/console',
           context: 'ci/api-test',
-          ghprbPullId: '44687',
+          ghprbPullId: count,
           status: 'pending'
         },
         {
@@ -219,7 +214,7 @@ class MainScreen extends Component {
           comment: '1347 passed in 4.537 secs',
           url: 'https://jenkins2.coupadev.com/job/trigger-build-manually/10981/artifact/tmp/node-test-ci.log',
           context: 'ci/jenkins-nodejs',
-          ghprbPullId: '44687',
+          ghprbPullId: count,
           status: 'success'
         }
       ]
@@ -242,15 +237,18 @@ class MainScreen extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1, marginTop: 20 }}>
+      <View style={{ flex: 1, marginTop: 30 }}>
         { this.renderNotifications() }
-
-        <Button
+        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <TouchableOpacity
           style={styles.clearButton}
-          backgroundColor={COLOR_BLUE}
-          title={`Clear all (${this.props.jenkins.length})`}
           onPress={() => this.clearAll()}
-        />
+        >
+          <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 18 }}>
+            {`Clear all (${this.props.jenkins.length})`}
+          </Text>
+        </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -268,8 +266,13 @@ const styles = {
     fontWeight: 'bold'
   },
   clearButton: {
-    marginBottom: 20,
-    height: 40
+    backgroundColor: COLOR_BLUE,
+    borderWidth: 0,
+    borderRadius: 100,
+    height: 50,
+    width: 160,
+    alignItems: 'center',
+    justifyContent: 'center',
   }
 };
 
